@@ -10,6 +10,8 @@ import Accounts from './pages/Accounts';
 import Transactions from './pages/Transactions';
 import Loans from './pages/Loans';
 import Incomes from './pages/Incomes';
+import Login from './pages/Login';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -17,14 +19,17 @@ function App() {
       <CssBaseline />
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="categories/create" element={<CreateCategory />} />
-            <Route path="accounts" element={<Accounts />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="loans" element={<Loans />} />
-            <Route path="incomes" element={<Incomes />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="categories" element={<Categories />} />
+              <Route path="categories/create" element={<CreateCategory />} />
+              <Route path="accounts" element={<Accounts />} />
+              <Route path="transactions" element={<Transactions />} />
+              <Route path="loans" element={<Loans />} />
+              <Route path="incomes" element={<Incomes />} />
+            </Route>
           </Route>
         </Routes>
       </Router>
