@@ -1,0 +1,40 @@
+categories
+- id
+- name
+
+accounts
+- id
+- categoryId
+- name
+- charges
+- number
+- description
+
+transactions
+- id
+- accountId
+- loanId (nullable)
+- title
+- description
+- date
+- type (credit/debit)
+
+loans
+- id
+- accountId
+- title
+- startAt
+- endAt
+- loadAmount
+- remainingAmount
+
+incomes
+- id
+- accountId
+- title
+- description
+- amount
+- maturityAmount
+- interestRate
+- startAt
+- endAt
