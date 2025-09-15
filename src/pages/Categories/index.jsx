@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Button, Grid, Card, CardContent, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, Grid, Card, CardContent, CircularProgress, CardActions, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_CATEGORIES, DATABASE_ID } from '../../lib/constants';
+import EditIcon from '@mui/icons-material/Edit';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -44,6 +45,11 @@ const Categories = () => {
                                 <CardContent>
                                     <Typography variant="h6">{category.name}</Typography>
                                 </CardContent>
+                                <CardActions>
+                                    <IconButton component={Link} to={`/categories/edit/${category.$id}`} size="small">
+                                        <EditIcon />
+                                    </IconButton>
+                                </CardActions>
                             </Card>
                         </Grid>
                     ))}
