@@ -41,8 +41,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 1.  **Clone the repository:**
 
     ```sh
-    git clone https://github.com/your-username/personnelfinanceapp.git
-    cd personnelfinanceapp
+    git clone https://github.com/aakashdesai-pro/my-fi.git
+    cd my-fi
     ```
 
 2.  **Install NPM packages:**
@@ -52,18 +52,19 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 ### Environment Variables
 
-To run this project, you will need to add the following environment variables to your `.env` file. Create a `.env` file in the root of your project.
+1.  Create a `.env` file by copying the example:
 
-`VITE_APPWRITE_URL`
-`VITE_APPWRITE_PROJECT_ID`
-`VITE_APPWRITE_DATABASE_ID`
-`VITE_APPWRITE_COLLECTION_ID_CATEGORIES`
-`VITE_APPWRITE_COLLECTION_ID_ACCOUNTS`
-`VITE_APPWRITE_COLLECTION_ID_TRANSACTIONS`
-`VITE_APPWRITE_COLLECTION_ID_LOANS`
-`VITE_APPWRITE_COLLECTION_ID_INCOMES`
+    ```sh
+    cp .env.example .env
+    ```
 
-You can get these values from your Appwrite project console.
+    On Windows, you can use:
+
+    ```sh
+    copy .env.example .env
+    ```
+
+2.  Update the `.env` file with your Appwrite project credentials. You can get these values from your Appwrite project console.
 
 ### Running the Application
 
