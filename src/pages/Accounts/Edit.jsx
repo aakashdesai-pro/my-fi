@@ -72,7 +72,7 @@ const EditAccount = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>Category</InputLabel>
                                     <Select
@@ -87,19 +87,27 @@ const EditAccount = () => {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <TextField name="name" label="Account Name" value={form.name} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 6
+                                }}>
                                 <TextField name="number" label="Account Number" value={form.number} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 6
+                                }}>
                                 <TextField name="charges" label="Charges (%)" type="number" value={form.charges} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <TextField name="description" label="Description" value={form.description} onChange={handleChange} fullWidth multiline rows={4} />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Update
                                 </Button>

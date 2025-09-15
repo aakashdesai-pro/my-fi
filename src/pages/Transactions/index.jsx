@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Button, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Chip } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Chip, Fab } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { databases } from '../../lib/appwrite';
+import { databases, client } from '../../lib/appwrite';
 import { COLLECTION_ID_TRANSACTIONS, DATABASE_ID } from '../../lib/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
@@ -27,6 +28,14 @@ const Transactions = () => {
 
     useEffect(() => {
         fetchTransactions();
+
+        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_TRANSACTIONS}.documents`, response => {
+            fetchTransactions();
+        });
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleDelete = async (id) => {
@@ -42,16 +51,13 @@ const Transactions = () => {
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Typography variant="h4">Transactions</Typography>
-                <Button component={Link} to="/transactions/create" variant="contained">
-                    Create Transaction
-                </Button>
             </Box>
             {loading ? (
                 <CircularProgress />
-            ) : (
+            ) : transactions.length > 0 ? (
                 <Grid container spacing={3}>
                     {transactions.map((transaction) => (
-                        <Grid item xs={12} key={transaction.$id}>
+                        <Grid key={transaction.$id} size={12}>
                             <Card>
                                 <CardContent>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -83,7 +89,22 @@ const Transactions = () => {
                         </Grid>
                     ))}
                 </Grid>
+            ) : (
+                <Typography>No transactions found.</Typography>
             )}
+            <Fab
+                component={Link}
+                to="/transactions/create"
+                color="primary"
+                aria-label="add"
+                sx={{
+                    position: 'fixed',
+                    bottom: 80,
+                    right: 24,
+                }}
+            >
+                <AddIcon />
+            </Fab>
         </Box>
     );
 };

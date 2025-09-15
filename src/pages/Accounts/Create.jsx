@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { databases } from '../../lib/appwrite';
 import { ID } from 'appwrite';
@@ -62,7 +62,7 @@ const CreateAccount = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>Category</InputLabel>
                                     <Select
@@ -77,19 +77,27 @@ const CreateAccount = () => {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <TextField name="name" label="Account Name" value={form.name} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 6
+                                }}>
                                 <TextField name="number" label="Account Number" value={form.number} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 6
+                                }}>
                                 <TextField name="charges" label="Charges (%)" type="number" value={form.charges} onChange={handleChange} fullWidth />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <TextField name="description" label="Description" value={form.description} onChange={handleChange} fullWidth multiline rows={4} />
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid size={12}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Create
                                 </Button>
