@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, AppBar, Toolbar, IconButton, Typography, useTheme, useMediaQuery, BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, Typography, useTheme, useMediaQuery, BottomNavigation, BottomNavigationAction, Divider } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -34,16 +34,31 @@ const Layout = () => {
         { text: 'Incomes', to: '/incomes', icon: <AttachMoneyIcon /> },
     ];
 
-    const drawer = (
-        <List>
-            {mainNavItems.concat(secondaryNavItems).map((item) => (
-                <ListItem key={item.text} disablePadding>
-                    <ListItemButton component={RouterLink} to={item.to} onClick={isMobile ? handleDrawerToggle : undefined}>
-                        <ListItemText primary={item.text} />
-                    </ListItemButton>
-                </ListItem>
-            ))}
-        </List>
+    const drawerContent = (
+        <div>
+            <Toolbar />
+            <List>
+                {mainNavItems.map((item) => (
+                    <ListItem key={item.text} disablePadding>
+                        <ListItemButton component={RouterLink} to={item.to} selected={location.pathname === item.to} onClick={isMobile ? handleDrawerToggle : undefined}>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+            <Divider />
+            <List>
+                {secondaryNavItems.map((item) => (
+                    <ListItem key={item.text} disablePadding>
+                        <ListItemButton component={RouterLink} to={item.to} selected={location.pathname === item.to} onClick={isMobile ? handleDrawerToggle : undefined}>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
+        </div>
     );
 
     return (
@@ -87,7 +102,7 @@ const Layout = () => {
                         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                     }}
                 >
-                    {drawer}
+                    {drawerContent}
                 </Drawer>
                 <Drawer
                     variant="permanent"
@@ -97,7 +112,7 @@ const Layout = () => {
                     }}
                     open
                 >
-                    {drawer}
+                    {drawerContent}
                 </Drawer>
             </Box>
             <Box
