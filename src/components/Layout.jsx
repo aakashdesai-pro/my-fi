@@ -36,7 +36,9 @@ const Layout = () => {
 
     const drawerContent = (
         <div>
-            <Toolbar />
+            <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
+                <img src="/assets/logo-landscape-transparent.png" alt="logo" style={{ height: 40 }} />
+            </Toolbar>
             <List>
                 {mainNavItems.map((item) => (
                     <ListItem key={item.text} disablePadding>
@@ -80,8 +82,8 @@ const Layout = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        Personal Finance
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+                        MyFi
                     </Typography>
                 </Toolbar>
             </AppBar>
