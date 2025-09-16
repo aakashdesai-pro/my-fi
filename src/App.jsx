@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ColorModeContext, useColorMode } from './contexts/ThemeContext';
 import theme from './theme';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
@@ -23,35 +24,39 @@ import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
+  const [theme, colorMode] = useColorMode();
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="categories/create" element={<CreateCategory />} />
-              <Route path="categories/edit/:id" element={<EditCategory />} />
-              <Route path="accounts" element={<Accounts />} />
-              <Route path="accounts/create" element={<CreateAccount />} />
-              <Route path="accounts/edit/:id" element={<EditAccount />} />
-              <Route path="transactions" element={<Transactions />} />
-              <Route path="transactions/create" element={<CreateTransaction />} />
-              <Route path="transactions/edit/:id" element={<EditTransaction />} />
-              <Route path="loans" element={<Loans />} />
-              <Route path="loans/create" element={<CreateLoan />} />
-              <Route path="loans/edit/:id" element={<EditLoan />} />
-              <Route path="incomes" element={<Incomes />} />
-              <Route path="incomes/create" element={<CreateIncome />} />
-              <Route path="incomes/edit/:id" element={<EditIncome />} />
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="categories/create" element={<CreateCategory />} />
+                <Route path="categories/edit/:id" element={<EditCategory />} />
+                <Route path="accounts" element={<Accounts />} />
+                <Route path="accounts/create" element={<CreateAccount />} />
+                <Route path="accounts/edit/:id" element={<EditAccount />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="transactions/create" element={<CreateTransaction />} />
+                <Route path="transactions/edit/:id" element={<EditTransaction />} />
+                <Route path="loans" element={<Loans />} />
+                <Route path="loans/create" element={<CreateLoan />} />
+                <Route path="loans/edit/:id" element={<EditLoan />} />
+                <Route path="incomes" element={<Incomes />} />
+                <Route path="incomes/create" element={<CreateIncome />} />
+                <Route path="incomes/edit/:id" element={<EditIncome />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </Router>
-    </ThemeProvider>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
 
