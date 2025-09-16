@@ -34,6 +34,7 @@
     "globals": "latest",
     "prettier": "latest",
     "vite": "latest",
-    "@rollup/rollup-linux-x64-musl": "latest"
+    "@rollup/rollup-linux-x64-musl": "latest",
+    "@tailwindcss/oxide-linux-x64-musl": "latest"
   }
 }
