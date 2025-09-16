@@ -18,6 +18,54 @@ The application is a single-page application (SPA) built with React and Vite. It
 
 - **Backend**: The application uses Appwrite for its backend services. The Appwrite configuration is located in `src/lib/appwrite.js` and uses environment variables for the endpoint and project ID.
 
+## Database Structure
+
+### categories
+
+- **id** (Primary Key)
+- **name**
+
+### accounts
+
+- **id** (Primary Key)
+- **name**
+- **number**
+- **description**
+- **categoryId** (Foreign Key to categories.id)
+
+### loans
+
+- **id** (Primary Key)
+- **title**
+- **startAt** (Format: DD-MM-YYYY)
+- **endAt** (Format: DD-MM-YYYY)
+- **loanAmount**
+- **remainingAmount**
+- **accountId** (Foreign Key to accounts.id)
+
+### incomes
+
+- **id** (Primary Key)
+- **title**
+- **description**
+- **amount**
+- **maturityAmount**
+- **interestRate**
+- **startAt**
+- **endAt**
+- **accountId** (Foreign Key to accounts.id)
+
+### transactions
+
+- **id** (Primary Key)
+- **title**
+- **description**
+- **amount**
+- **type** (Enum: 'credit', 'debit')
+- **date** (Format: DD-MM-YYYY)
+- **accountId** (Foreign Key to accounts.id)
+- **loanId** (Foreign Key to loans.id, Nullable)
+
 ## Key Concepts and Conventions
 
 ### Routing

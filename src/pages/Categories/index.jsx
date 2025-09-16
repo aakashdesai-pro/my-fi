@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { databases, client } from '../../lib/appwrite';
+import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_CATEGORIES, DATABASE_ID } from '../../lib/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,32 +13,22 @@ const Categories = () => {
     const [open, setOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
+    const fetchCategories = async () => {
+        try {
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                COLLECTION_ID_CATEGORIES
+            );
+            setCategories(response.documents);
+        } catch (error) {
+            console.error('Failed to fetch categories:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    COLLECTION_ID_CATEGORIES
-                );
-                setCategories(response.documents);
-            } catch (error) {
-                console.error('Failed to fetch categories:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchCategories();
-
-        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_CATEGORIES}.documents`, response => {
-            // Callback will be executed on changes for documents A and all files.
-            console.log(response);
-            fetchCategories();
-        });
-
-        return () => {
-            unsubscribe();
-        };
     }, []);
 
     const handleClickOpen = (category) => {
@@ -59,6 +49,7 @@ const Categories = () => {
                     COLLECTION_ID_CATEGORIES,
                     selectedCategory.$id
                 );
+                fetchCategories();
                 handleClose();
             } catch (error) {
                 console.error('Failed to delete category:', error);

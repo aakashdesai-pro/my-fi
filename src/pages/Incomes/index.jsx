@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { databases, client } from '../../lib/appwrite';
+import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_INCOMES, DATABASE_ID } from '../../lib/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +10,8 @@ import AddIcon from '@mui/icons-material/Add';
 const Incomes = () => {
     const [incomes, setIncomes] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [selectedIncome, setSelectedIncome] = useState(null);
 
     const fetchIncomes = async () => {
         setLoading(true);
@@ -28,22 +30,27 @@ const Incomes = () => {
 
     useEffect(() => {
         fetchIncomes();
-
-        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_INCOMES}.documents`, response => {
-            fetchIncomes();
-        });
-
-        return () => {
-            unsubscribe();
-        };
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_INCOMES, id);
-            fetchIncomes(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to delete income:', error);
+    const handleClickOpen = (income) => {
+        setSelectedIncome(income);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedIncome(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedIncome) {
+            try {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_INCOMES, selectedIncome.$id);
+                fetchIncomes(); // Refresh the list
+                handleClose();
+            } catch (error) {
+                console.error('Failed to delete income:', error);
+            }
         }
     };
 
@@ -66,19 +73,28 @@ const Incomes = () => {
                             }}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6">{income.source}</Typography>
+                                    <Typography variant="h6">{income.title}</Typography>
                                     <Typography variant="h5" component="div" sx={{ mt: 1 }}>
                                         ${income.amount.toLocaleString()}
                                     </Typography>
                                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                        Date: {new Date(income.date).toLocaleDateString()}
+                                        Maturity: ${income.maturityAmount.toLocaleString()}
+                                    </Typography>
+                                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                        Interest Rate: {income.interestRate}%
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        Start Date: {new Date(income.startAt).toLocaleDateString()}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        End Date: {new Date(income.endAt).toLocaleDateString()}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
                                     <IconButton component={Link} to={`/incomes/edit/${income.$id}`} size="small">
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => handleDelete(income.$id)} size="small">
+                                    <IconButton onClick={() => handleClickOpen(income)} size="small">
                                         <DeleteIcon />
                                     </IconButton>
                                 </CardActions>
@@ -102,6 +118,23 @@ const Incomes = () => {
             >
                 <AddIcon />
             </Fab>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+            >
+                <DialogTitle>{"Delete Income?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete the income "{selectedIncome?.title}"? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { databases, client } from '../../lib/appwrite';
+import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_LOANS, DATABASE_ID } from '../../lib/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,14 +30,6 @@ const Loans = () => {
 
     useEffect(() => {
         fetchLoans();
-
-        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_LOANS}.documents`, response => {
-            fetchLoans();
-        });
-
-        return () => {
-            unsubscribe();
-        };
     }, []);
 
     const handleClickOpen = (loan) => {
@@ -81,22 +73,18 @@ const Loans = () => {
                             }}>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h6">{loan.lender}</Typography>
-                                    <Typography color="text.secondary">Borrower: {loan.borrower}</Typography>
+                                    <Typography variant="h6">{loan.title}</Typography>
                                     <Typography variant="h5" component="div" sx={{ mt: 1 }}>
-                                        ${loan.amount.toLocaleString()}
+                                        ${loan.loanAmount.toLocaleString()}
                                     </Typography>
                                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                                        Interest Rate: {loan.interestRate}%
+                                        Remaining: ${loan.remainingAmount.toLocaleString()}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Start Date: {new Date(loan.loanDate).toLocaleDateString()}
+                                        Start Date: {new Date(loan.startAt).toLocaleDateString()}
                                     </Typography>
                                     <Typography variant="body2">
-                                        Due Date: {new Date(loan.dueDate).toLocaleDateString()}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ mt: 1 }}>
-                                        Status: {loan.status}
+                                        End Date: {new Date(loan.endAt).toLocaleDateString()}
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
@@ -134,7 +122,7 @@ const Loans = () => {
                 <DialogTitle>{"Delete Loan?"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete the loan from "{selectedLoan?.lender}"? This action cannot be undone.
+                        Are you sure you want to delete the loan "{selectedLoan?.title}"? This action cannot be undone.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

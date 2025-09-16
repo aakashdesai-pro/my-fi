@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, TextField, Button, CircularProgress, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { databases } from '../../lib/appwrite';
-import { COLLECTION_ID_INCOMES, DATABASE_ID } from '../../lib/constants';
+import { COLLECTION_ID_INCOMES, DATABASE_ID, COLLECTION_ID_ACCOUNTS } from '../../lib/constants';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const EditIncome = () => {
     const { id } = useParams();
-    const [source, setSource] = useState('');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
-    const [date, setDate] = useState('');
+    const [maturityAmount, setMaturityAmount] = useState('');
+    const [interestRate, setInterestRate] = useState('');
+    const [startAt, setStartAt] = useState('');
+    const [endAt, setEndAt] = useState('');
+    const [accountId, setAccountId] = useState('');
+    const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(true);
+    const [accountsLoading, setAccountsLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,16 +26,33 @@ const EditIncome = () => {
             setPageLoading(true);
             try {
                 const response = await databases.getDocument(DATABASE_ID, COLLECTION_ID_INCOMES, id);
-                setSource(response.source);
+                setTitle(response.title);
+                setDescription(response.description);
                 setAmount(response.amount.toString());
-                setDate(new Date(response.date).toISOString().split('T')[0]);
+                setMaturityAmount(response.maturityAmount.toString());
+                setInterestRate(response.interestRate.toString());
+                setStartAt(new Date(response.startAt).toISOString().split('T')[0]);
+                setEndAt(new Date(response.endAt).toISOString().split('T')[0]);
+                setAccountId(response.accountId);
             } catch (error) {
                 console.error('Failed to fetch income:', error);
             } finally {
                 setPageLoading(false);
             }
         };
+        const fetchAccounts = async () => {
+            setAccountsLoading(true);
+            try {
+                const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID_ACCOUNTS);
+                setAccounts(response.documents);
+            } catch (error) {
+                console.error('Failed to fetch accounts:', error);
+            } finally {
+                setAccountsLoading(false);
+            }
+        };
         fetchIncome();
+        fetchAccounts();
     }, [id]);
 
     const handleSubmit = async (e) => {
@@ -39,9 +64,14 @@ const EditIncome = () => {
                 COLLECTION_ID_INCOMES,
                 id,
                 {
-                    source,
+                    title,
+                    description,
                     amount: parseFloat(amount),
-                    date: new Date(date).toISOString(),
+                    maturityAmount: parseFloat(maturityAmount),
+                    interestRate: parseFloat(interestRate),
+                    startAt: new Date(startAt).toISOString(),
+                    endAt: new Date(endAt).toISOString(),
+                    accountId,
                 }
             );
             navigate('/incomes');
@@ -59,14 +89,24 @@ const EditIncome = () => {
 
     return (
         <Box>
+            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/incomes')} sx={{ mb: 2 }}>
+                Back
+            </Button>
             <Typography variant="h4" sx={{ mb: 4 }}>Edit Income</Typography>
             <form onSubmit={handleSubmit}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: '500px' }}>
                     <TextField
-                        label="Source"
-                        value={source}
-                        onChange={(e) => setSource(e.target.value)}
+                        label="Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                         required
+                    />
+                    <TextField
+                        label="Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        multiline
+                        rows={4}
                     />
                     <TextField
                         label="Amount"
@@ -76,18 +116,55 @@ const EditIncome = () => {
                         required
                     />
                     <TextField
-                        label="Date"
+                        label="Maturity Amount"
+                        type="number"
+                        value={maturityAmount}
+                        onChange={(e) => setMaturityAmount(e.target.value)}
+                        required
+                    />
+                    <TextField
+                        label="Interest Rate (%)"
+                        type="number"
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(e.target.value)}
+                        required
+                    />
+                    <TextField
+                        label="Start Date"
                         type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
+                        value={startAt}
+                        onChange={(e) => setStartAt(e.target.value)}
                         InputLabelProps={{ shrink: true }}
                         required
                     />
-                    <Button type="submit" variant="contained" disabled={loading}>
+                    <TextField
+                        label="End Date"
+                        type="date"
+                        value={endAt}
+                        onChange={(e) => setEndAt(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
+                        required
+                    />
+                    <FormControl fullWidth>
+                        <InputLabel id="account-select-label">Account</InputLabel>
+                        {accountsLoading ? <CircularProgress size={24} /> : (
+                            <Select
+                                labelId="account-select-label"
+                                value={accountId}
+                                label="Account"
+                                onChange={(e) => setAccountId(e.target.value)}
+                                required
+                            >
+                                {accounts.map((account) => (
+                                    <MenuItem key={account.$id} value={account.$id}>
+                                        {account.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
+                    </FormControl>
+                    <Button type="submit" variant="contained" disabled={loading} fullWidth>
                         {loading ? <CircularProgress size={24} /> : 'Update'}
-                    </Button>
-                    <Button variant="outlined" onClick={() => navigate('/incomes')} sx={{ mt: 1 }}>
-                        Back
                     </Button>
                 </Box>
             </form>

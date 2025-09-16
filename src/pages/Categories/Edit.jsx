@@ -3,6 +3,7 @@ import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress
 import { useNavigate, useParams } from 'react-router-dom';
 import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_CATEGORIES, DATABASE_ID } from '../../lib/constants';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const EditCategory = () => {
     const { id } = useParams();
@@ -42,6 +43,9 @@ const EditCategory = () => {
 
     return (
         <Box>
+            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/categories')} sx={{ mb: 2 }}>
+                Back
+            </Button>
             <Typography variant="h4" gutterBottom>
                 Edit Account Category
             </Typography>
@@ -56,11 +60,8 @@ const EditCategory = () => {
                             onChange={(e) => setName(e.target.value)}
                             sx={{ mb: 2 }}
                         />
-                        <Button type="submit" variant="contained" color="primary">
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
                             Update
-                        </Button>
-                        <Button variant="outlined" onClick={() => navigate('/categories')} sx={{ ml: 2 }}>
-                            Back
                         </Button>
                     </form>
                 </CardContent>

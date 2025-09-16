@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { databases } from '../../lib/appwrite';
 import { ID } from 'appwrite';
 import { COLLECTION_ID_CATEGORIES, DATABASE_ID } from '../../lib/constants';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CreateCategory = () => {
     const [name, setName] = useState('');
@@ -28,6 +29,9 @@ const CreateCategory = () => {
 
     return (
         <Box>
+            <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/categories')} sx={{ mb: 2 }}>
+                Back
+            </Button>
             <Typography variant="h4" gutterBottom>
                 Create Account Category
             </Typography>
@@ -42,11 +46,8 @@ const CreateCategory = () => {
                             onChange={(e) => setName(e.target.value)}
                             sx={{ mb: 2 }}
                         />
-                        <Button type="submit" variant="contained" color="primary">
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
                             Create
-                        </Button>
-                        <Button variant="outlined" onClick={() => navigate('/categories')} sx={{ ml: 2 }}>
-                            Back
                         </Button>
                     </form>
                 </CardContent>

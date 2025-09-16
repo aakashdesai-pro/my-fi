@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Chip, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { databases, client } from '../../lib/appwrite';
+import { databases } from '../../lib/appwrite';
 import { COLLECTION_ID_TRANSACTIONS, DATABASE_ID } from '../../lib/constants';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,14 +30,6 @@ const Transactions = () => {
 
     useEffect(() => {
         fetchTransactions();
-
-        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_TRANSACTIONS}.documents`, response => {
-            fetchTransactions();
-        });
-
-        return () => {
-            unsubscribe();
-        };
     }, []);
 
     const handleClickOpen = (transaction) => {

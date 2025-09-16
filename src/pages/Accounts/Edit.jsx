@@ -99,7 +99,7 @@ const EditAccount = () => {
                                 <TextField name="description" label="Description" value={form.description} onChange={handleChange} fullWidth multiline rows={4} />
                             </Grid>
                             <Grid size={12}>
-                                <Button type="submit" variant="contained" color="primary">
+                                <Button type="submit" variant="contained" color="primary" fullWidth>
                                     Update
                                 </Button>
                             </Grid>
