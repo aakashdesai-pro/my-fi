@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, Typography, useTheme, useMediaQuery, BottomNavigation, BottomNavigationAction, Divider } from '@mui/material';
+import { useState, useContext } from 'react';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, Typography, useTheme, useMediaQuery, BottomNavigation, BottomNavigationAction, Divider, Menu, MenuItem } from '@mui/material';
 import { Link as RouterLink, Outlet, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -8,6 +8,12 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { ColorModeContext } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const drawerWidth = 240;
 
@@ -17,6 +23,22 @@ const Layout = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const location = useLocation();
     const [value, setValue] = useState(location.pathname);
+    const colorMode = useContext(ColorModeContext);
+    const { logout } = useAuth();
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        logout();
+        handleClose();
+    };
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -39,22 +61,64 @@ const Layout = () => {
             <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
                 <img src="/assets/logo-landscape-transparent.png" alt="logo" style={{ height: 40 }} />
             </Toolbar>
-            <List>
+            <List sx={{ px: 2 }}>
                 {mainNavItems.map((item) => (
-                    <ListItem key={item.text} disablePadding>
-                        <ListItemButton component={RouterLink} to={item.to} selected={location.pathname === item.to} onClick={isMobile ? handleDrawerToggle : undefined}>
-                            <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                            component={RouterLink}
+                            to={item.to}
+                            selected={location.pathname === item.to}
+                            onClick={isMobile ? handleDrawerToggle : undefined}
+                            sx={{
+                                borderRadius: '8px',
+                                '&.Mui-selected': {
+                                    backgroundColor: 'primary.main',
+                                    color: 'primary.contrastText',
+                                    '& .MuiListItemIcon-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                },
+                                '&.Mui-selected:hover': {
+                                    backgroundColor: 'primary.dark',
+                                },
+                                '&:hover': {
+                                    backgroundColor: 'action.hover',
+                                },
+                            }}
+                        >
+                            <ListItemIcon sx={{ minWidth: 0, mr: 1.5 }}>{item.icon}</ListItemIcon>
                             <ListItemText primary={item.text} />
                         </ListItemButton>
                     </ListItem>
                 ))}
             </List>
             <Divider />
-            <List>
+            <List sx={{ px: 2 }}>
                 {secondaryNavItems.map((item) => (
-                    <ListItem key={item.text} disablePadding>
-                        <ListItemButton component={RouterLink} to={item.to} selected={location.pathname === item.to} onClick={isMobile ? handleDrawerToggle : undefined}>
-                            <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                            component={RouterLink}
+                            to={item.to}
+                            selected={location.pathname === item.to}
+                            onClick={isMobile ? handleDrawerToggle : undefined}
+                            sx={{
+                                borderRadius: '8px',
+                                '&.Mui-selected': {
+                                    backgroundColor: 'primary.main',
+                                    color: 'primary.contrastText',
+                                    '& .MuiListItemIcon-root': {
+                                        color: 'primary.contrastText',
+                                    },
+                                },
+                                '&.Mui-selected:hover': {
+                                    backgroundColor: 'primary.dark',
+                                },
+                                '&:hover': {
+                                    backgroundColor: 'action.hover',
+                                },
+                            }}
+                        >
+                            <ListItemIcon sx={{ minWidth: 0, mr: 1.5 }}>{item.icon}</ListItemIcon>
                             <ListItemText primary={item.text} />
                         </ListItemButton>
                     </ListItem>
@@ -85,6 +149,46 @@ const Layout = () => {
                     <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                         MyFi
                     </Typography>
+                    <div>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleMenu}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorEl}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={colorMode.toggleColorMode}>
+                                <ListItemIcon>
+                                    {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                                </ListItemIcon>
+                                <ListItemText primary={theme.palette.mode === 'dark' ? 'Light Mode' : 'Dark Mode'} />
+                            </MenuItem>
+                            <MenuItem onClick={handleLogout}>
+                                <ListItemIcon>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Logout" />
+                            </MenuItem>
+                        </Menu>
+                    </div>
                 </Toolbar>
             </AppBar>
             <Box
