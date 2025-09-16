@@ -33,9 +33,6 @@
     "eslint-plugin-react-refresh": "latest",
     "globals": "latest",
     "prettier": "latest",
-    "vite": "latest",
-    "@rollup/rollup-linux-x64-musl": "latest",
-    "@tailwindcss/oxide-linux-x64-musl": "latest",
-    "@lightningcss/linux-x64-musl": "latest"
+    "vite": "latest"
   }
 }
