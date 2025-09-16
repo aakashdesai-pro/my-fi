@@ -12,7 +12,6 @@ const EditAccount = () => {
     const [form, setForm] = useState({
         categoryId: '',
         name: '',
-        charges: '',
         number: '',
         description: ''
     });
@@ -28,7 +27,6 @@ const EditAccount = () => {
                 setForm({
                     categoryId: accountRes.categoryId,
                     name: accountRes.name,
-                    charges: accountRes.charges,
                     number: accountRes.number,
                     description: accountRes.description
                 });
@@ -96,13 +94,6 @@ const EditAccount = () => {
                                     sm: 6
                                 }}>
                                 <TextField name="number" label="Account Number" value={form.number} onChange={handleChange} fullWidth />
-                            </Grid>
-                            <Grid
-                                size={{
-                                    xs: 12,
-                                    sm: 6
-                                }}>
-                                <TextField name="charges" label="Charges (%)" type="number" value={form.charges} onChange={handleChange} fullWidth />
                             </Grid>
                             <Grid size={12}>
                                 <TextField name="description" label="Description" value={form.description} onChange={handleChange} fullWidth multiline rows={4} />

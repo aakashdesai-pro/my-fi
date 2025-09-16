@@ -87,9 +87,6 @@ const Accounts = () => {
                                     <Typography variant="body2" color="text.secondary">
                                         Number: {account.number}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Charges: {account.charges}%
-                                    </Typography>
                                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                                         {account.description}
                                     </Typography>
