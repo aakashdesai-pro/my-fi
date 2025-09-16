@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { databases, client } from '../../lib/appwrite';
 import { COLLECTION_ID_ACCOUNTS, DATABASE_ID } from '../../lib/constants';
@@ -10,6 +10,8 @@ import AddIcon from '@mui/icons-material/Add';
 const Accounts = () => {
     const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState(null);
 
     const fetchAccounts = async () => {
         setLoading(true);
@@ -38,12 +40,25 @@ const Accounts = () => {
         };
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_ACCOUNTS, id);
-            fetchAccounts(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to delete account:', error);
+    const handleClickOpen = (account) => {
+        setSelectedAccount(account);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedAccount(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedAccount) {
+            try {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_ACCOUNTS, selectedAccount.$id);
+                fetchAccounts(); // Refresh the list
+                handleClose();
+            } catch (error) {
+                console.error('Failed to delete account:', error);
+            }
         }
     };
 
@@ -83,7 +98,7 @@ const Accounts = () => {
                                     <IconButton component={Link} to={`/accounts/edit/${account.$id}`} size="small">
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => handleDelete(account.$id)} size="small">
+                                    <IconButton onClick={() => handleClickOpen(account)} size="small">
                                         <DeleteIcon />
                                     </IconButton>
                                 </CardActions>
@@ -107,6 +122,23 @@ const Accounts = () => {
             >
                 <AddIcon />
             </Fab>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+            >
+                <DialogTitle>{"Delete Account?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete the account "{selectedAccount?.name}"? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

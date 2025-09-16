@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { databases, client } from '../../lib/appwrite';
 import { COLLECTION_ID_LOANS, DATABASE_ID } from '../../lib/constants';
@@ -10,6 +10,8 @@ import AddIcon from '@mui/icons-material/Add';
 const Loans = () => {
     const [loans, setLoans] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [selectedLoan, setSelectedLoan] = useState(null);
 
     const fetchLoans = async () => {
         setLoading(true);
@@ -38,12 +40,25 @@ const Loans = () => {
         };
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_LOANS, id);
-            fetchLoans(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to delete loan:', error);
+    const handleClickOpen = (loan) => {
+        setSelectedLoan(loan);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedLoan(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedLoan) {
+            try {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_LOANS, selectedLoan.$id);
+                fetchLoans(); // Refresh the list
+                handleClose();
+            } catch (error) {
+                console.error('Failed to delete loan:', error);
+            }
         }
     };
 
@@ -88,7 +103,7 @@ const Loans = () => {
                                     <IconButton component={Link} to={`/loans/edit/${loan.$id}`} size="small">
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => handleDelete(loan.$id)} size="small">
+                                    <IconButton onClick={() => handleClickOpen(loan)} size="small">
                                         <DeleteIcon />
                                     </IconButton>
                                 </CardActions>
@@ -112,6 +127,23 @@ const Loans = () => {
             >
                 <AddIcon />
             </Fab>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+            >
+                <DialogTitle>{"Delete Loan?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete the loan from "{selectedLoan?.lender}"? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

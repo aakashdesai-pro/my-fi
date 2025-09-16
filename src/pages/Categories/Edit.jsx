@@ -59,6 +59,9 @@ const EditCategory = () => {
                         <Button type="submit" variant="contained" color="primary">
                             Update
                         </Button>
+                        <Button variant="outlined" onClick={() => navigate('/categories')} sx={{ ml: 2 }}>
+                            Back
+                        </Button>
                     </form>
                 </CardContent>
             </Card>

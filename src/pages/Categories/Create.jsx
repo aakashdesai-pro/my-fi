@@ -45,6 +45,9 @@ const CreateCategory = () => {
                         <Button type="submit" variant="contained" color="primary">
                             Create
                         </Button>
+                        <Button variant="outlined" onClick={() => navigate('/categories')} sx={{ ml: 2 }}>
+                            Back
+                        </Button>
                     </form>
                 </CardContent>
             </Card>

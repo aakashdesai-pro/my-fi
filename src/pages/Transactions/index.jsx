@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Chip, Fab } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, CircularProgress, CardActions, IconButton, Chip, Fab, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { databases, client } from '../../lib/appwrite';
 import { COLLECTION_ID_TRANSACTIONS, DATABASE_ID } from '../../lib/constants';
@@ -10,6 +10,8 @@ import AddIcon from '@mui/icons-material/Add';
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     const fetchTransactions = async () => {
         setLoading(true);
@@ -38,12 +40,25 @@ const Transactions = () => {
         };
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_TRANSACTIONS, id);
-            fetchTransactions(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to delete transaction:', error);
+    const handleClickOpen = (transaction) => {
+        setSelectedTransaction(transaction);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedTransaction(null);
+    };
+
+    const handleDelete = async () => {
+        if (selectedTransaction) {
+            try {
+                await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_TRANSACTIONS, selectedTransaction.$id);
+                fetchTransactions(); // Refresh the list
+                handleClose();
+            } catch (error) {
+                console.error('Failed to delete transaction:', error);
+            }
         }
     };
 
@@ -81,7 +96,7 @@ const Transactions = () => {
                                     <IconButton component={Link} to={`/transactions/edit/${transaction.$id}`} size="small">
                                         <EditIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => handleDelete(transaction.$id)} size="small">
+                                    <IconButton onClick={() => handleClickOpen(transaction)} size="small">
                                         <DeleteIcon />
                                     </IconButton>
                                 </CardActions>
@@ -105,6 +120,23 @@ const Transactions = () => {
             >
                 <AddIcon />
             </Fab>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+            >
+                <DialogTitle>{"Delete Transaction?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete the transaction "{selectedTransaction?.title}"? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
